@@ -1,7 +1,9 @@
 import React from 'react';
-
+import Cards from '../components/Cards';
+import {useParams} from "react-router-dom";
 	function About() {
-	  return <h2>About</h2>;
+		const { id } = useParams();
+		return <Cards id={id}/>;
 	}
 
 export default About;

@@ -1,7 +1,7 @@
 import React from 'react';
-
+import Album from '../components/Album';
 function Home() {
-	  return <h2>Home</h2>;
+	  return (<Album/>)
 	}
 
 export default Home;

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Toolbar, Typography, Container, Link } from '@material-ui/core';
+import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, CssBaseline, Grid, Toolbar, Typography, Container, Link, Fab } from '@material-ui/core';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
 import { makeStyles } from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import AddDialog from './AddDialog';
 
 function Copyright() {
   return (
@@ -42,21 +45,34 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  margin: {
+    margin: theme.spacing(1),
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
   },
 }));
-
 export default function Album() {
   const [boards, setBoards] = useState([]);
-
+  const [open, setOpen] = useState(false);
   const classes = useStyles();
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
-  useEffect(async ()=>{
-    const response = await fetch("http://localhost:5000/api");
-    const data = await response.json()
-    setBoards(data);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
+
+
+  useEffect(()=>{
+    async function fetchData(){
+      const response = await fetch("http://localhost:5000/api");
+      const data = await response.json()
+      setBoards(data);
+    }  fetchData();
   }, []);
 
   return (
@@ -77,11 +93,6 @@ export default function Album() {
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
               Album layout
             </Typography>
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              Something short and leading about the collection below—its contents, the creator, etc.
-              Make it short and sweet, but not too short so folks don&apos;t simply skip over it
-              entirely.
-            </Typography>
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
@@ -100,6 +111,19 @@ export default function Album() {
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
+          <div><Typography component={'span'}>
+              <Box fontSize={30} m={1}>
+                Add a new table
+                <Fab color="secondary" aria-label="add" className={classes.margin} onClick={handleClickOpen}>
+                  <AddIcon />
+                </Fab>
+              </Box>
+            </Typography>
+            <h1 style={{textAlign: 'right'}}>List table</h1>
+          </div>
+          
+          {open && <AddDialog handleClose={handleClose} stt={open} type={0} boardId={0}/>}
+
           <Grid container spacing={4}>
             {boards.map((board, index) => (
               <Grid item key={index} xs={12} sm={6} md={4}>
@@ -118,10 +142,10 @@ export default function Album() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
+                    <Button href={'/'+board._id} size="small" color="primary">
                       View
                     </Button>
-                    <Button size="small" color="primary">
+                    <Button href={'/'+board._id} size="small" color="primary">
                       Edit
                     </Button>
                   </CardActions>
