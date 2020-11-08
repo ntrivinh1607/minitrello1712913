@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Card, CardActions, CardContent, Grid, Typography, Fab, Paper } from '@material-ui/core';
+import { Grid, Typography, Fab, Paper, Box } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import AddDialog from './AddDialog';
+import CardItem from './CardItem';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -12,12 +13,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
   },
 }));
 
@@ -33,8 +28,13 @@ export default function Cards(props) {
   };
   useEffect(()=>{
     async function fetchData(){
-      const response = await fetch("http://localhost:5000/api/"+id);
-      const data = await response.json()
+      let token=null;
+      if(JSON.parse(localStorage.getItem('login'))) token =JSON.parse(localStorage.getItem('login')).token;
+      const response = await fetch("http://localhost:5000/api/"+id, {
+        method: "GET",
+        headers: {'Content-Type':'application/x-www-form-urlencoded', 'Authorization': 'Bearer '+token},
+      });
+      const data = await response.json();
       setBoard(data);
     }  fetchData();
   }, []);
@@ -47,24 +47,11 @@ export default function Cards(props) {
             <Typography variant="h3" gutterBottom>Went well</Typography>
             <Fab color="secondary" aria-label="add" onClick={()=>{setOpen(true); setType(1);}}>
               <AddIcon />
-            </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id}/>}
-            {board.wentWell.map((card, index) => (
-              <Card className={classes.pos}>
-                <CardContent>
-                  <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    {card.subject}
-                  </Typography>
-                  <Typography variant="h5" component="h2">
-                  
-                  </Typography>
-                  <Typography className={classes.pos} color="textSecondary">
-                    {card.content}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
-                </CardActions>
-              </Card>
+            </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/"/>}
+            {board.wentWell && board.wentWell.map((card, index) => (
+              <Box key={index} bgcolor="info.main" color="info.contrastText" p={1}  my={2}>
+                <CardItem card={card} />
+            </Box> 
             ))}
             </Paper>
           </Grid>
@@ -73,24 +60,11 @@ export default function Cards(props) {
               <Typography variant="h3" gutterBottom>To improve</Typography>
               <Fab color="secondary" aria-label="add" onClick={()=>{setOpen(true); setType(2);}}>
                 <AddIcon />
-              </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id}/>}
-              {board.toImprove.map((card, index) => (
-              <Card className={classes.pos}>
-                <CardContent>
-                  <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    {card.subject}
-                  </Typography>
-                  <Typography variant="h5" component="h2">
-                  
-                  </Typography>
-                  <Typography className={classes.pos} color="textSecondary">
-                    {card.content}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
-                </CardActions>
-              </Card>
+              </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/" />}
+              {board.toImprove && board.toImprove.map((card, index) => (
+              <Box key={index} bgcolor="info.main" color="info.contrastText" p={1}  my={2}>
+                <CardItem card={card}/>
+              </Box>
             ))}
             </Paper>
           </Grid>
@@ -99,24 +73,11 @@ export default function Cards(props) {
               <Typography variant="h3" gutterBottom>Action Items</Typography>
               <Fab color="secondary" aria-label="add" onClick={()=>{setOpen(true); setType(3);}}>
                 <AddIcon />
-              </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id}/>}
-              {board.actionItems.map((card, index) => (
-              <Card className={classes.pos}>
-                <CardContent>
-                  <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    {card.subject}
-                  </Typography>
-                  <Typography variant="h5" component="h2">
-                  
-                  </Typography>
-                  <Typography className={classes.pos} color="textSecondary">
-                    {card.content}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
-                </CardActions>
-              </Card>
+              </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/" />}
+              {board.actionItems && board.actionItems.map((card, index) => (
+              <Box key={index} bgcolor="info.main" color="info.contrastText" p={1} my={2}>
+                <CardItem card={card}/>
+              </Box>
             ))}
             </Paper>
           </Grid>

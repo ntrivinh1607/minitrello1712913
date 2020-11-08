@@ -1,0 +1,9 @@
+  .menuButton: {
+    marginRight: theme.spacing(2),
+  };
+  .title: {
+    flexGrow: 1,
+  };
+  .popover: {
+    pointerEvents: 'none',
+  };

@@ -7,23 +7,23 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function AddDialog(props) {
-  const { url, stt, type, boardId, handleClose } = props;
-  const [newBoard, setNewBoard] = useState({field1:"", field2:"", type:type});
+export default function UpdateDialog(props) {
+  const { url, stt, isBoard, handleClose, item } = props;
+  const [newBoard, setNewBoard] = useState({field1:"", field2:""});
   let field1Name="", field2Name="";
-  if(boardId!==""){      // if it's true -> add a new card
-    field1Name="Subject";
-    field2Name="Content";
-  }else{      //if it's true -> add a new board
+  if(isBoard){
     field1Name="Title";
     field2Name="Description";
+  }else{
+    field1Name="Subject";
+    field2Name="Content";
   }
   let token=null;
   if(JSON.parse(localStorage.getItem('login'))) token =JSON.parse(localStorage.getItem('login')).token;
 
   const handleSubmit = async (e)=>{
     try{
-      await fetch(boardId?url+boardId:url, {
+      await fetch(url, {
       method: "POST",
       body: JSON.stringify(newBoard),
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token},
@@ -38,10 +38,10 @@ export default function AddDialog(props) {
     <div>
       <Dialog open={stt} onClose={handleClose} aria-labelledby="form-dialog-title">
         <form id="form-data" onSubmit={handleSubmit} autoComplete="off">
-          <DialogTitle id="form-dialog-title">Please enter infomations</DialogTitle>
+          <DialogTitle id="form-dialog-title">Update {isBoard? "Board":"Card"}</DialogTitle>
           <DialogContent>
-              <TextField autoFocus fullWidth margin="dense" name={field1Name} label={field1Name} type="text" onChange={e => setNewBoard({ ...newBoard, field1: e.target.value})} />
-              <TextField fullWidth margin="dense" name={field2Name} label={field2Name} type="text" onChange={e => setNewBoard({ ...newBoard, field2: e.target.value})} />
+              <TextField autoFocus fullWidth placeholder={isBoard?item.title:item.subject} margin="dense" name={field1Name} label={field1Name} type="text" onChange={e => setNewBoard({ ...newBoard, field1: e.target.value})} />
+              <TextField fullWidth margin="dense" placeholder={isBoard?item.description:item.content} name={field2Name} label={field2Name} type="text" onChange={e => setNewBoard({ ...newBoard, field2: e.target.value})} />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">Cancel</Button>
