@@ -87,6 +87,7 @@ export default function Sign(props) {
               <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
+              <Link href="/auth/facebook">Login with Facebook</Link>
             </Grid>
           </Grid>}
           {!isLogin && <Grid container>

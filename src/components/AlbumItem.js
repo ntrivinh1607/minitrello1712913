@@ -3,11 +3,14 @@ import "./AlbumItem.css"
 import UpdateDialog from './UpdateDialog';
 import { Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
 export default function AlbumItem(props) {
-  const { board } = props;
+  const { board, handleDelete } = props;
   const [ open, setOpen ] = useState(false);
   const handleClose = () => {
     setOpen(false);
   };
+  const handleClickDelete = ()=>{
+    handleDelete(board._id);
+  }
   return(
   <div>
     <Card className="card">
@@ -25,6 +28,9 @@ export default function AlbumItem(props) {
         </Button>
         <Button onClick={()=>setOpen(true)} size="small" color="primary">
           Edit
+        </Button>
+        <Button onClick={handleClickDelete} size="small" color="primary">
+          Delete
         </Button>
       </CardActions>
     </Card>

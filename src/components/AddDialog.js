@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function AddDialog(props) {
@@ -23,14 +22,16 @@ export default function AddDialog(props) {
 
   const handleSubmit = async (e)=>{
     try{
-      await fetch(boardId?url+boardId:url, {
+      const response = await fetch(boardId?url+boardId:url, {
       method: "POST",
       body: JSON.stringify(newBoard),
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token},
-    }).then(response => response.json()).then(data => console.log(data));
+    })
+    const data = await response.json();
+    console.log(data);
     handleClose();
     }catch(e){
-      alert(e);
+      console.log(e);
     }
   };
 

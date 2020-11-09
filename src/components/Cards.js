@@ -38,6 +38,26 @@ export default function Cards(props) {
       setBoard(data);
     }  fetchData();
   }, []);
+  const handleDelete = async (id) =>{
+    try{
+      let token=null;
+      if(JSON.parse(localStorage.getItem('login'))) token =JSON.parse(localStorage.getItem('login')).token;
+      const response = await fetch("http://localhost:5000/api/deleteCard/"+id, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token},
+      })
+      const data = await response.json();
+      if(data.success){   
+        let changedBoard = JSON.parse(JSON.stringify(board));
+        if(changedBoard.wentWell.length) changedBoard.wentWell = changedBoard.wentWell.filter(item => !(item._id === id));
+        if(changedBoard.toImprove.length) changedBoard.toImprove = changedBoard.toImprove.filter(item => !(item._id === id));
+        if(changedBoard.actionItems.length) changedBoard.actionItems = changedBoard.actionItems.filter(item => !(item._id === id));
+        setBoard(changedBoard);
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
   return (
     <Grid container className={classes.root} spacing={3}>
       <Grid item xs={12}>
@@ -50,7 +70,7 @@ export default function Cards(props) {
             </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/"/>}
             {board.wentWell && board.wentWell.map((card, index) => (
               <Box key={index} bgcolor="info.main" color="info.contrastText" p={1}  my={2}>
-                <CardItem card={card} />
+                <CardItem card={card} handleDelete={handleDelete} />
             </Box> 
             ))}
             </Paper>
@@ -63,7 +83,7 @@ export default function Cards(props) {
               </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/" />}
               {board.toImprove && board.toImprove.map((card, index) => (
               <Box key={index} bgcolor="info.main" color="info.contrastText" p={1}  my={2}>
-                <CardItem card={card}/>
+                <CardItem card={card} handleDelete={handleDelete} />
               </Box>
             ))}
             </Paper>
@@ -76,7 +96,7 @@ export default function Cards(props) {
               </Fab>{open && <AddDialog handleClose={handleClose} stt={open} type={type} boardId={id} url="http://localhost:5000/api/addCard/" />}
               {board.actionItems && board.actionItems.map((card, index) => (
               <Box key={index} bgcolor="info.main" color="info.contrastText" p={1} my={2}>
-                <CardItem card={card}/>
+                <CardItem card={card} handleDelete={handleDelete} />
               </Box>
             ))}
             </Paper>

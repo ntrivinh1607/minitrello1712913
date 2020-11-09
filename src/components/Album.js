@@ -28,7 +28,6 @@ export default function Album() {
   const handleClose = () => {
     setOpen(false);
   };
-  
   useEffect(()=>{
     async function fetchData(){
       try{
@@ -47,6 +46,24 @@ export default function Album() {
       }
     }  fetchData();
   }, []);
+  const handleDelete = async (id) =>{
+    try{
+      let token=null;
+      if(JSON.parse(localStorage.getItem('login'))) token =JSON.parse(localStorage.getItem('login')).token;
+      const response = await fetch("http://localhost:5000/api/deleteBoard/"+id, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+token},
+      })
+      const data = await response.json();
+      if(data.success){   
+        let changedBoards = JSON.parse(JSON.stringify(boards));
+        changedBoards = changedBoards.filter(item => !(item._id === id));
+        setBoards(changedBoards);
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
 
   return (
     <React.Fragment>
@@ -75,7 +92,7 @@ export default function Album() {
           <Grid container spacing={4}>
             {boards.map((board, index) =>
               <Grid item key={index} xs={12} sm={6} md={4}> 
-                <AlbumItem board={board} />
+                <AlbumItem board={board} handleDelete={handleDelete}/>
               </Grid>
             )}
           </Grid>
